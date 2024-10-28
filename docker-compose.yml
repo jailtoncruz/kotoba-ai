@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - '5444:5432'
+    environment:
+      - POSTGRES_DB=jpteacher
+      - POSTGRES_USER=jpteacher
+      - POSTGRES_PASSWORD=jpteacher
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - ./data/postgresql:/var/lib/postgresql/data

@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // adjust this to your database provider
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String?
+  email     String   @unique
+  password  String
+
+  // One-to-many relation with UserProgress
+  progress UserProgress[]
+
+  // One-to-many relation with ReviewHistory
+  reviewHistory ReviewHistory[]
+}
+
+model Flashcard {
+  id            String          @id @default(uuid())
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  hiragana      String          @unique()
+  meaning       String?
+  type          CardType // e.g., "word" or "phrase"
+  complexity    Int // 1 for basic, increase for more complex words
+  explanation   String? // additional info for phrases or complex grammar
+  progress      UserProgress[]
+  reviewHistory ReviewHistory[]
+}
+
+model UserProgress {
+  id             String    @id @default(uuid())
+  createdAt      DateTime  @default(now())
+  userId         String
+  flashcardId    String
+  proficiency    Int // e.g., 0 = unfamiliar, increases as user masters
+  lastReviewed   DateTime? // date of the last review
+  nextReviewDate DateTime? // date when this card should be reviewed again
+
+  user      User      @relation(fields: [userId], references: [id])
+  flashcard Flashcard @relation(fields: [flashcardId], references: [id])
+
+  @@unique([userId, flashcardId]) // Composite unique key to avoid duplicate progress entries
+}
+
+model ReviewHistory {
+  id          String     @id @default(uuid())
+  createdAt   DateTime   @default(now())
+  userId      String
+  flashcardId String
+  reviewType  ReviewType // e.g., "reviewed" or "mastered"
+
+  user      User      @relation(fields: [userId], references: [id])
+  flashcard Flashcard @relation(fields: [flashcardId], references: [id])
+}
+
+enum CardType {
+  WORD
+  PHRASE
+}
+
+enum ReviewType {
+  REVIEWED
+  MASTERED
+}
