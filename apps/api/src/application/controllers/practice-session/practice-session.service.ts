@@ -1,9 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../../infraestructure/database/prisma/prisma.service';
+import { TextToSpeechService } from '../../../core/abstract/cloud/text-to-speech.service';
 
 @Injectable()
 export class PracticeSessionService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private tts: TextToSpeechService,
+  ) {}
 
   // Function to get the next card based on SRS principles
   async getNextCard(userId: string) {
@@ -31,7 +35,9 @@ export class PracticeSessionService {
         .flashcard;
     } else if (unseenCards.length > 0) {
       // Randomly select one of the unseen cards
-      return unseenCards[Math.floor(Math.random() * unseenCards.length)];
+      const card = unseenCards[Math.floor(Math.random() * unseenCards.length)];
+      // this.tts.generate(card.hiragana);
+      return card;
     }
 
     // If no cards available in either list, throw an exception
