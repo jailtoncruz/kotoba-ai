@@ -3,18 +3,23 @@ import { EnvironmentService } from '../../../config/environment/environment.serv
 import { TextToSpeechClient } from '@google-cloud/text-to-speech';
 import { writeFile } from 'node:fs/promises';
 import { TextToSpeechService } from '../../../../core/abstract/cloud/text-to-speech.service';
+import { FileService } from '../../../config/file/file.service';
+import { resolve } from 'path';
 
 @Injectable()
 export class GcpTextToSpeechService extends TextToSpeechService {
   private client: TextToSpeechClient;
-  constructor(private environment: EnvironmentService) {
+  constructor(
+    private environment: EnvironmentService,
+    private fileService: FileService,
+  ) {
     super();
     this.client = new TextToSpeechClient({
       keyFilename: this.environment.getGoogleCloudKeyPath(),
     });
   }
 
-  async generate(text: string) {
+  async generate(text: string): Promise<string> {
     // Performs the text-to-speech request
     const [response] = await this.client.synthesizeSpeech({
       input: {
@@ -29,7 +34,9 @@ export class GcpTextToSpeechService extends TextToSpeechService {
     });
 
     // Save the generated binary audio content to a local file
-    await writeFile('output.mp3', response.audioContent, 'binary');
-    console.log('Audio content written to file: output.mp3', text);
+    const folderPath = this.fileService.getOrCreateFolder('tts-files');
+    const filepath = resolve(folderPath, `${text}.mp3`);
+    await writeFile(filepath, response.audioContent, 'binary');
+    return filepath;
   }
 }

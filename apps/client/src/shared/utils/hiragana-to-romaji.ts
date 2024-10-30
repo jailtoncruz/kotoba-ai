@@ -10,6 +10,7 @@ const hiraganaToRomajiMap: { [key: string]: string } = {
   や: "ya", ゆ: "yu", よ: "yo",
   ら: "ra", り: "ri", る: "ru", れ: "re", ろ: "ro",
   わ: "wa", を: "wo", ん: "n",
+  ゃ: "ya", ゅ: "yu", ょ: "kyo",
 
   // Dakuten variations
   が: "ga", ぎ: "gi", ぐ: "gu", げ: "ge", ご: "go",

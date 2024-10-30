@@ -13,7 +13,12 @@ export class PracticeSessionService {
   async getNextCard(userId: string) {
     // Fetch up to 10 cards due for review
     const reviewCards = await this.prisma.userProgress.findMany({
-      where: { userId },
+      where: {
+        userId,
+        nextReviewDate: {
+          lte: new Date(),
+        },
+      },
       include: { flashcard: true },
       orderBy: [{ nextReviewDate: 'asc' }, { proficiency: 'asc' }],
       take: 10,
@@ -36,7 +41,6 @@ export class PracticeSessionService {
     } else if (unseenCards.length > 0) {
       // Randomly select one of the unseen cards
       const card = unseenCards[Math.floor(Math.random() * unseenCards.length)];
-      // this.tts.generate(card.hiragana);
       return card;
     }
 

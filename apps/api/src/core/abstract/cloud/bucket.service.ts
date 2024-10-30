@@ -9,6 +9,12 @@ export interface CreatePreSignedOptions {
   contentType?: string;
 }
 
+export interface IBucketUploadOptions {
+  basepath?: string;
+  contentType?: string;
+  public?: boolean;
+}
+
 export interface IBucketService {
   createBucket(name: string): Promise<string>;
   isBucketExists(name: string): Promise<boolean>;
@@ -18,9 +24,13 @@ export interface IBucketService {
   deleteObject(object: string): Promise<void>;
   createPresignedGetObject(options: CreatePreSignedOptions): Promise<string>;
   createPresignedPutObject(options: CreatePreSignedOptions): Promise<string>;
+  upload(filepath: string, options?: IBucketUploadOptions): Promise<any>;
 }
 
 export abstract class BucketService implements IBucketService {
+  upload(filepath: string, options?: IBucketUploadOptions): Promise<any> {
+    throw new Error(filepath + options.basepath);
+  }
   createBucket(name: string): Promise<string> {
     throw new Error(name);
   }

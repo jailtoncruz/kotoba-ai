@@ -8,4 +8,14 @@ export abstract class GenerateCardDto {
   @IsNumber()
   @Min(1)
   complexity: number;
+
+  @ApiProperty({
+    minimum: 1,
+  })
+  @IsNumber()
+  @Min(1)
+  quantity: number;
+
+  @ApiProperty()
+  context?: string;
 }

@@ -28,6 +28,7 @@ model Flashcard {
   updatedAt     DateTime        @updatedAt
   hiragana      String          @unique()
   meaning       String?
+  audioUrl      String?
   type          CardType // e.g., "word" or "phrase"
   complexity    Int // 1 for basic, increase for more complex words
   explanation   String? // additional info for phrases or complex grammar

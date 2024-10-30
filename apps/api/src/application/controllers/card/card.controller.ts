@@ -10,10 +10,9 @@ export class CardController {
   constructor(private readonly cardService: CardService) {}
 
   @Post('generate')
-  async generateCards(@Body() { complexity }: GenerateCardDto) {
+  async generateCards(@Body() data: GenerateCardDto) {
     // Use the cardService to generate flashcards
-    const generatedCards =
-      await this.cardService.generateFlashcards(complexity);
-    return { generatedCards };
+    const generatedCards = await this.cardService.generateFlashcards(data);
+    return { generatedCards, size: generatedCards.length };
   }
 }

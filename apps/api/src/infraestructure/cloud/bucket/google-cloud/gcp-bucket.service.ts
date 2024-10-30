@@ -3,8 +3,10 @@ import { Bucket, Storage } from '@google-cloud/storage';
 import {
   BucketService,
   CreatePreSignedOptions,
+  IBucketUploadOptions,
 } from '../../../../core/abstract/cloud/bucket.service';
 import { EnvironmentService } from '../../../config/environment/environment.service';
+import { basename } from 'path';
 
 @Injectable()
 export class GcpBucketService extends BucketService {
@@ -23,6 +25,7 @@ export class GcpBucketService extends BucketService {
   async createPresignedPutObject(
     options: CreatePreSignedOptions,
   ): Promise<string> {
+    // this.bucket.file(options.object).
     const data = await this.bucket.file(options.object).getSignedUrl({
       version: 'v4',
       action: 'write',
@@ -42,5 +45,19 @@ export class GcpBucketService extends BucketService {
       // contentType: options.contentType ?? 'application/octet-stream',
     });
     return data[0];
+  }
+
+  async upload(filepath: string, options?: IBucketUploadOptions): Promise<any> {
+    const destFileName = basename(filepath);
+    const destination = (options?.basepath ?? '') + destFileName;
+    await this.bucket.upload(filepath, {
+      destination,
+      metadata: {
+        contentType: options?.contentType,
+      },
+    });
+    const file = this.bucket.file(destination);
+    if (options.public) file.makePublic();
+    return options.public ? file.publicUrl() : destination;
   }
 }
