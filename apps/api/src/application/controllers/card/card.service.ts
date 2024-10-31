@@ -52,6 +52,10 @@ export class CardService {
       orderBy: { createdAt: 'desc' },
     });
 
+    this.logger.log(
+      `Generating ${quantity} cards with complexity ${complexity}`,
+    );
+
     const prompt = [
       {
         role: 'system',
@@ -111,15 +115,12 @@ export class CardService {
       }
     }
 
+    this.logger.log(`${flashcards.length} cards generated.`);
+
     return flashcards;
   }
 
-  private parseAiResponse(response: string): Array<{
-    hiragana: string;
-    meaning: string;
-    type: CardType;
-    explanation?: string;
-  }> {
+  private parseAiResponse(response: string): Array<AiCardDto> {
     try {
       // Parse the response as JSON directly
       return JSON.parse(response);
@@ -128,4 +129,32 @@ export class CardService {
       return [];
     }
   }
+
+  async explain(card_id: string) {
+    const card = await this.prisma.flashcard.findUnique({
+      where: { id: card_id },
+      select: { hiragana: true },
+    });
+
+    const prompt = [
+      {
+        role: 'system',
+        content: 'You are a helpful assistant for learning japanese.',
+      },
+      {
+        role: 'user',
+        content: `Explain me what's mean this "${card.hiragana}"? `,
+      },
+    ];
+
+    const aiResponse = await this.aiService.completion(prompt);
+    return aiResponse.message.content;
+  }
+}
+
+interface AiCardDto {
+  hiragana: string;
+  meaning: string;
+  type: CardType;
+  explanation?: string;
 }
