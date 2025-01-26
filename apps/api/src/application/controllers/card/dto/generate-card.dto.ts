@@ -16,6 +16,6 @@ export abstract class GenerateCardDto {
   @Min(1)
   quantity: number;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   context?: string;
 }

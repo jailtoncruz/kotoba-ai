@@ -5,7 +5,7 @@ const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isAuthenticated = !!localStorage.getItem("authToken");
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/sign-in" replace />;
   }
 
   return <>{children}</>;

@@ -29,6 +29,37 @@ const hiraganaToRomajiMap: { [key: string]: string } = {
   ひゃ: "hya", ひゅ: "hyu", ひょ: "hyo",
   みゃ: "mya", みゅ: "myu", みょ: "myo",
   りゃ: "rya", りゅ: "ryu", りょ: "ryo",
+
+  // Katakana to Romaji
+  ア: "a", イ: "i", ウ: "u", エ: "e", オ: "o",
+  カ: "ka", キ: "ki", ク: "ku", ケ: "ke", コ: "ko",
+  サ: "sa", シ: "shi", ス: "su", セ: "se", ソ: "so",
+  タ: "ta", チ: "chi", ツ: "tsu", テ: "te", ト: "to",
+  ナ: "na", ニ: "ni", ヌ: "nu", ネ: "ne", ノ: "no",
+  ハ: "ha", ヒ: "hi", フ: "fu", ヘ: "he", ホ: "ho",
+  マ: "ma", ミ: "mi", ム: "mu", メ: "me", モ: "mo",
+  ヤ: "ya", ユ: "yu", ヨ: "yo",
+  ラ: "ra", リ: "ri", ル: "ru", レ: "re", ロ: "ro",
+  ワ: "wa", ヲ: "wo", ン: "n",
+  ャ: "ya", ュ: "yu", ョ: "yo",
+
+  // Dakuten variations (Katakana)
+  ガ: "ga", ギ: "gi", グ: "gu", ゲ: "ge", ゴ: "go",
+  ザ: "za", ジ: "ji", ズ: "zu", ゼ: "ze", ゾ: "zo",
+  ダ: "da", ヂ: "ji", ヅ: "zu", デ: "de", ド: "do",
+  バ: "ba", ビ: "bi", ブ: "bu", ベ: "be", ボ: "bo",
+
+  // Handakuten variations (Katakana)
+  パ: "pa", ピ: "pi", プ: "pu", ペ: "pe", ポ: "po",
+
+  // Double character variations (Katakana)
+  キャ: "kya", キュ: "kyu", キョ: "kyo",
+  シャ: "sha", シュ: "shu", ショ: "sho",
+  チャ: "cha", チュ: "chu", チョ: "cho",
+  ニャ: "nya", ニュ: "nyu", ニョ: "nyo",
+  ヒャ: "hya", ヒュ: "hyu", ヒョ: "hyo",
+  ミャ: "mya", ミュ: "myu", ミョ: "myo",
+  リャ: "rya", リュ: "ryu", リョ: "ryo",
 };
 
 export function convertToRomaji(hiragana: string): string {
