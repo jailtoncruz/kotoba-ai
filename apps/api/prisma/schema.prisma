@@ -20,6 +20,7 @@ model User {
 
   // One-to-many relation with ReviewHistory
   reviewHistory ReviewHistory[]
+  lessons       Lesson[]
 }
 
 model Flashcard {
@@ -70,4 +71,27 @@ enum CardType {
 enum ReviewType {
   REVIEWED
   MASTERED
+}
+
+model Lesson {
+  id          String             @id @default(uuid())
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  title       String
+  description String
+  authorId    String
+  author      User               @relation(fields: [authorId], references: [id])
+  lines       LessonScriptLine[]
+}
+
+model LessonScriptLine {
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  lessonId     String
+  order        Int
+  languageCode String // en-US, ja-JP, etc.
+  text         String
+  audioUrl     String?
+  lesson       Lesson   @relation(fields: [lessonId], references: [id])
 }

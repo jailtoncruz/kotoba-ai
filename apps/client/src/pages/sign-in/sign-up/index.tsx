@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { Link } from "react-router-dom";
-import * as Form from "@radix-ui/react-form";
+import { Form } from "radix-ui";
 
 interface UserSignUpDto {
   name: string;

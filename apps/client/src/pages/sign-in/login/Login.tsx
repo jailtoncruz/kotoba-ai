@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import * as Form from "@radix-ui/react-form";
 import axios from "axios";
+import { Form } from "radix-ui";
 
 export function Login() {
   const navigate = useNavigate();

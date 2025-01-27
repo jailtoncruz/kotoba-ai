@@ -4,6 +4,22 @@ interface MenuProps {
   isMenuOpen: boolean;
 }
 
+function MenuItem({
+  to,
+  children,
+}: {
+  to: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <li className="mb-4">
+      <Link to={to} className="text-gray-100 hover:text-white">
+        {children}
+      </Link>
+    </li>
+  );
+}
+
 export function Menu({ isMenuOpen }: MenuProps) {
   return (
     <aside
@@ -11,32 +27,10 @@ export function Menu({ isMenuOpen }: MenuProps) {
     >
       <nav>
         <ul>
-          <li className="mb-4">
-            <Link to="/home" className="text-gray-100 hover:text-white">
-              Home
-            </Link>
-          </li>
-          <li className="mb-4">
-            <Link to="/home/deck" className="text-gray-100 hover:text-white">
-              Deck
-            </Link>
-          </li>
-          <li className="mb-4">
-            <Link
-              to="/home/practice"
-              className="text-gray-100 hover:text-white"
-            >
-              Practice
-            </Link>
-          </li>
-          {/* <li>
-            <Link
-              to="/home/settings"
-              className="text-gray-100 hover:text-white"
-            >
-              Settings
-            </Link>
-          </li> */}
+          <MenuItem to="/home">Home</MenuItem>
+          <MenuItem to="/home/deck">Deck</MenuItem>
+          <MenuItem to="/home/practice">Practice</MenuItem>
+          <MenuItem to="/home/lessons">Custom Lessons</MenuItem>
         </ul>
       </nav>
     </aside>

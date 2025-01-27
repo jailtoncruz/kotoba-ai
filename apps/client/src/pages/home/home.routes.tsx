@@ -2,6 +2,7 @@ import { Link, Route, Routes } from "react-router-dom";
 import { Deck } from "./deck";
 import { Practice } from "./practice/Practice";
 import AuthGuard from "../../core/guards/AuthGuard";
+import { LessonsRoutes } from "./custom-lessons/lessons.routes";
 
 export function HomeRoutes() {
   return (
@@ -22,6 +23,7 @@ export function HomeRoutes() {
         />
         <Route path="practice" element={<Practice />} />
         <Route path="deck" element={<Deck />} />
+        <Route path="lessons/*" element={<LessonsRoutes />} />
       </Routes>
     </AuthGuard>
   );

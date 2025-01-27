@@ -6,6 +6,7 @@ import { BucketService } from '../../../core/abstract/cloud/bucket.service';
 import { TextToSpeechService } from '../../../core/abstract/cloud/text-to-speech.service';
 import { LoggerService } from '../../../core/abstract/logger-service';
 import { GenerateCardDto } from './dto/generate-card.dto';
+import { LanguageCode } from '../../../core/constants/language-code';
 
 @Injectable()
 export class CardService {
@@ -27,7 +28,11 @@ export class CardService {
       },
     });
     for (const card of cards) {
-      const filepath = await this.ttsService.generate(card.hiragana);
+      const filepath = await this.ttsService.generate(card.hiragana, {
+        languageCode: LanguageCode.JA_JP,
+        ssmlGender: 'FEMALE',
+        name: 'ja-JP-Neural2-B',
+      });
       const audioUrl = await this.bucketService.upload(filepath, {
         basepath: 'audio-cards/',
         contentType: 'audio/mp3',
@@ -91,7 +96,11 @@ export class CardService {
 
       if (!existingCard) {
         // Step 3: If no duplicate found, create the new flashcard
-        const filepath = await this.ttsService.generate(suggestion.hiragana);
+        const filepath = await this.ttsService.generate(suggestion.hiragana, {
+          languageCode: LanguageCode.JA_JP,
+          ssmlGender: 'FEMALE',
+          name: 'ja-JP-Neural2-B',
+        });
         const audioUrl = await this.bucketService.upload(filepath, {
           basepath: 'audio-cards/',
           contentType: 'audio/mp3',
