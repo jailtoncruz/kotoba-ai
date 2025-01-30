@@ -5,10 +5,10 @@ import { writeFile } from 'node:fs/promises';
 import {
   ExtraOptions,
   TextToSpeechService,
-  VoiceOptions,
 } from '../../../../core/abstract/cloud/text-to-speech.service';
 import { FileService } from '../../../config/file/file.service';
 import { resolve } from 'path';
+import { VoiceOptions } from '../../../../core/constants/voice-options';
 
 @Injectable()
 export class GcpTextToSpeechService extends TextToSpeechService {

@@ -11,6 +11,11 @@ import { writeFile } from 'fs/promises';
 import { LoggerService } from '../../../core/abstract/logger-service';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
+import {
+  VoiceOptions,
+  VoiceOptionsMap,
+} from '../../../core/constants/voice-options';
+import { BucketService } from '../../../core/abstract/cloud/bucket.service';
 
 @Injectable()
 export class LessonService {
@@ -18,6 +23,7 @@ export class LessonService {
     private aiService: AiChatService,
     private ttsService: TextToSpeechService,
     private fileService: FileService,
+    private bucketService: BucketService,
     private logger: LoggerService,
     @InjectQueue('tts') private ttsQueue: Queue,
   ) {
@@ -67,21 +73,35 @@ export class LessonService {
     console.time('generateLesson:tts_generation');
     for (const line of lessonLines) {
       try {
-        await this.ttsService.generate(
-          line.text,
-          {
-            languageCode: line.languageCode,
-            ssmlGender: 'FEMALE',
-            name:
-              line.languageCode === LanguageCode.JA_JP
-                ? 'ja-JP-Neural2-B'
-                : 'en-US-Journey-F',
-          },
-          {
-            folder: `lesson-audios/${code}`,
-            filename: `${code}-${line.sequence.toString().padStart(3, '0')}.mp3`,
-          },
+        // create a payload object to be sent to the TTS service
+        const text = line.text;
+        const voiceOptions: VoiceOptions = VoiceOptionsMap.get(
+          line.languageCode,
         );
+        const extraOptions = {
+          folder: `lesson-audios/${code}`,
+          filename: `${code}-${line.sequence.toString().padStart(3, '0')}.mp3`,
+        };
+
+        if (lessonLines.indexOf(line) === 0) {
+          this.ttsQueue.add(code, {
+            input: text,
+            voiceOptions,
+            extraOptions,
+          });
+        }
+
+        const filepath = await this.ttsService.generate(
+          text,
+          voiceOptions,
+          extraOptions,
+        );
+        // send the file generate to the bucket service to be uploaded to the cloud storage...
+        this.bucketService.upload(filepath, {
+          basepath: `lesson-audios/${code}`,
+          contentType: 'audio/mp3',
+          public: true,
+        });
       } catch (_err) {
         const err = _err as Error;
         this.logger.error(
@@ -113,9 +133,28 @@ export class LessonService {
   }
 
   async tts() {
-    const input = 'こんにちは、私は日本語を話すことができます。';
     const code = generateCode();
-    this.ttsQueue.add(code, { input });
-    return input;
+
+    this.ttsQueue.add(code, {
+      input: 'こんにちは、私は日本語を話すことができます。',
+      voiceOptions: VoiceOptionsMap.get(LanguageCode.JA_JP),
+      extraOptions: {
+        folder: `lesson-audios/${code}`,
+        filename: 'ja-JP-audio.mp3',
+      },
+    });
+
+    this.ttsQueue.add(code, {
+      input: 'What exactly do you like about me, honey?',
+      voiceOptions: VoiceOptionsMap.get(LanguageCode.EN_US),
+      extraOptions: {
+        folder: `lesson-audios/${code}`,
+        filename: 'en-US-audio.mp3',
+      },
+    });
+
+    return {
+      code,
+    };
   }
 }

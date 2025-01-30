@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { TTSConsumer } from './consumer/tts.consumer';
+import { TTSProcessor } from './services/tts.processor';
 import { BullModule } from '@nestjs/bullmq';
+
+import { CloudModule, EnvironmentModule } from '@monorepo/shared';
+import { LoggerModule } from '@monorepo/shared';
 
 @Module({
   imports: [
@@ -15,8 +17,12 @@ import { BullModule } from '@nestjs/bullmq';
     BullModule.registerQueue({
       name: 'tts',
     }),
+
+    LoggerModule.forRoot(),
+    CloudModule,
+    EnvironmentModule.forRoot(),
   ],
   controllers: [AppController],
-  providers: [AppService, TTSConsumer],
+  providers: [TTSProcessor],
 })
 export class AppModule {}
