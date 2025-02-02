@@ -1,7 +1,7 @@
 {
-  "name": "client",
+  "name": "ai-jp-teacher-client",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@monorepo/shared": "workspace:*",
     "@radix-ui/themes": "^3.1.4",
+    "@tanstack/react-query": "^5.66.0",
     "axios": "^1.7.7",
     "radix-ui": "^1.1.2",
     "react": "^18.3.1",

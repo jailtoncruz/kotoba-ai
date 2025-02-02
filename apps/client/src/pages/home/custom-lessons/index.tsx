@@ -1,13 +1,19 @@
-import { useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { listLessons } from "../../../shared/services/api/lesson";
 
 export function CustomLessons() {
-  const [lessons] = useState(["Lesson 1", "Lesson 2", "Lesson 3"]);
+  const { data: lessons, isLoading } = useQuery({
+    queryKey: ["lessons"],
+    queryFn: listLessons,
+  });
   const navigate = useNavigate();
 
+  if (isLoading) return <div>Loading...</div>;
+
   return (
-    <div className="bg-gray-900 text-white flex flex-col flex-1">
+    <div className="bg-gray-900 text-white flex flex-col flex-1 px-2">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-xl font-bold">Custom Lessons</h1>
@@ -16,22 +22,18 @@ export function CustomLessons() {
 
       {/* Main Content */}
       <div className="grid grid-cols-1 gap-4">
-        {lessons.map((lesson, index) => (
-          <div
-            key={index}
-            className="border p-4 cursor-pointer rounded bg-slate-800"
-            onClick={() => navigate(index.toString())}
-          >
-            <div>
-              <h2 className="font-semibold text-lg">{lesson}</h2>
+        {lessons?.map((lesson) => {
+          return (
+            <div
+              key={lesson.id}
+              className="bg-gray-800 p-4 rounded-md cursor-pointer"
+              onClick={() => navigate(lesson.id)}
+            >
+              <p>{lesson.title}</p>
+              <p>{lesson.description}</p>
             </div>
-            <div>
-              <p className="text-sm text-gray-600">
-                This is a placeholder description for {lesson}.
-              </p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

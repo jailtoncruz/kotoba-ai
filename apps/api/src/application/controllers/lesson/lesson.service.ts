@@ -158,4 +158,17 @@ export class LessonService {
       })),
     );
   }
+
+  async getLessonById(id: string) {
+    return await this.prisma.lesson.findUnique({
+      where: { id },
+      include: { lines: { orderBy: { order: 'asc' } } },
+    });
+  }
+
+  async listLessonsByUserId(userId: string) {
+    return await this.prisma.lesson.findMany({
+      where: { authorId: userId },
+    });
+  }
 }

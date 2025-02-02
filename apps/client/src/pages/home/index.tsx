@@ -36,7 +36,12 @@ export function Home() {
       <div className="flex-grow flex">
         <Menu isMenuOpen={isMenuOpen} />
 
-        <main className="flex-grow flex flex-col">
+        <main
+          className="flex-grow flex flex-col flex-1"
+          style={{
+            maxHeight: "calc(100vh - 72px)",
+          }}
+        >
           <HomeRoutes />
         </main>
       </div>
