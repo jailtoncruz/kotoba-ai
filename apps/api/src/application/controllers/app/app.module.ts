@@ -4,8 +4,8 @@ import { resolve } from 'path';
 import { ControllerModule } from '../controller.module';
 import { EnvironmentModule } from '../../../infraestructure/config/environment/environment.module';
 import { SwaggerService } from '../../../infraestructure/config/swagger/swagger.service';
-import { LoggerModule } from '../../../infraestructure/logger/logger.module';
 import { BullModule } from '@nestjs/bullmq';
+import { LoggerModule } from '@monorepo/shared';
 
 @Module({
   imports: [
@@ -13,9 +13,8 @@ import { BullModule } from '@nestjs/bullmq';
       rootPath: resolve(process.cwd(), '..', 'client', 'dist'),
     }),
     ControllerModule,
-    EnvironmentModule.forRoot(),
     LoggerModule.forRoot(),
-
+    EnvironmentModule.forRoot(),
     BullModule.forRoot({
       connection: {
         host: 'localhost',

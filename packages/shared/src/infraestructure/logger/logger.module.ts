@@ -1,8 +1,8 @@
-import { DynamicModule, Global, Module } from '@nestjs/common';
+import { DynamicModule, Global, Logger, Module } from '@nestjs/common';
 import { ProductionLoggerService } from './production-logger.service';
 import { DevelopmentLoggerService } from './development-logger.service';
-import { PRODUCTION_MODE } from '../config/environment/contants';
 import { LoggerService } from '../../core/abstract/logger-service';
+import { PRODUCTION_MODE } from '../config/environment/contants';
 
 const LoggerServiceProvider = {
   provide: LoggerService,
@@ -13,8 +13,8 @@ const LoggerServiceProvider = {
 
 @Global()
 @Module({
-  providers: [LoggerServiceProvider],
-  exports: [LoggerServiceProvider],
+  providers: [LoggerServiceProvider, Logger],
+  exports: [LoggerServiceProvider, Logger],
 })
 export class LoggerModule {
   static forRoot(): DynamicModule {

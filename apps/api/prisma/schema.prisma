@@ -74,24 +74,26 @@ enum ReviewType {
 }
 
 model Lesson {
-  id          String             @id @default(uuid())
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
-  title       String
-  description String
-  authorId    String
-  author      User               @relation(fields: [authorId], references: [id])
-  lines       LessonScriptLine[]
+  id           String       @id @default(uuid())
+  code         String       @unique
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  title        String
+  description  String
+  observations String?
+  authorId     String
+  author       User         @relation(fields: [authorId], references: [id])
+  lines        LessonLine[]
 }
 
-model LessonScriptLine {
+model LessonLine {
   id           String   @id @default(uuid())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
   lessonId     String
   order        Int
   languageCode String // en-US, ja-JP, etc.
   text         String
   audioUrl     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   lesson       Lesson   @relation(fields: [lessonId], references: [id])
 }

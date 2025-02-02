@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { CloudModule } from '../../infraestructure/cloud/cloud.module';
 import { CardModule } from './card/card.module';
 import { DatabaseModule } from '../../infraestructure/database/database.module';
-import { LoggerModule } from '../../infraestructure/config/custom/logger/logger.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -16,7 +15,6 @@ import { LessonModule } from './lesson/lesson.module';
   imports: [
     CloudModule,
     DatabaseModule,
-    LoggerModule,
     CardModule,
     UserModule,
     JwtModule.registerAsync({

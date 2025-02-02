@@ -1,38 +1,56 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AiChatService } from '../../../core/abstract/cloud/ai-chat.service';
 import { GenerateLessonDto } from './dto/generate-lesson.dto';
-import { LessonScriptLine } from '../../../core/domain/lesson-script-line';
-import { splitTextByJapanese } from '../../../shared/functions/split-japanese-parts';
-import { TextToSpeechService } from '../../../core/abstract/cloud/text-to-speech.service';
-import { LanguageCode } from '../../../core/constants/language-code';
 import { generateCode } from '../../../shared/functions/generate-code';
-import { FileService } from '../../../infraestructure/config/file/file.service';
-import { writeFile } from 'fs/promises';
-import { LoggerService } from '../../../core/abstract/logger-service';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
-import {
-  VoiceOptions,
-  VoiceOptionsMap,
-} from '../../../core/constants/voice-options';
-import { BucketService } from '../../../core/abstract/cloud/bucket.service';
+import { VoiceOptionsMap } from '../../../core/constants/voice-options';
+import { LoggerService, TTSQueuePayload } from '@monorepo/shared';
+import { PrismaService } from 'src/infraestructure/database/prisma/prisma.service';
+import { LessonLine } from '@prisma/client';
+import { splitTextByJapanese } from '@monorepo/shared/dist/shared/functions';
+
+const INVALID_LINES = ['.', '。', ''];
 
 @Injectable()
 export class LessonService {
   constructor(
     private aiService: AiChatService,
-    private ttsService: TextToSpeechService,
-    private fileService: FileService,
-    private bucketService: BucketService,
+    private prisma: PrismaService,
     private logger: LoggerService,
-    @InjectQueue('tts') private ttsQueue: Queue,
+    @InjectQueue('tts')
+    private ttsQueue: Queue<
+      TTSQueuePayload<{
+        returnChannel: string;
+        lessonLineId: string;
+      }>
+    >,
   ) {
     logger.setContext(LessonService.name);
+    this.generateAudioIfNull();
   }
-  async generateLesson({ name, subject, observations }: GenerateLessonDto) {
+
+  private async generateAudioIfNull() {
+    const lines = await this.prisma.lessonLine.findMany({
+      where: {
+        audioUrl: null,
+      },
+      include: { lesson: { select: { code: true } } },
+    });
+    for (const line of lines) {
+      await this.addLessonLineToTTSQueue(line.lesson.code, [line]);
+    }
+
+    if (lines.length > 0)
+      this.logger.log(`Audio generation queued for ${lines.length} cards.`);
+  }
+
+  async generateLesson(
+    { name, subject, observations }: GenerateLessonDto,
+    userId: string,
+  ) {
     const code = generateCode();
 
-    console.time('generateLesson:ai_completion');
     const prompt = [
       {
         role: 'system',
@@ -55,106 +73,89 @@ export class LessonService {
                   }`,
       },
     ];
-
+    const lesson = await this.prisma.lesson.create({
+      data: {
+        title: name,
+        description: subject,
+        authorId: userId,
+        code,
+      },
+    });
     const aiResponse = await this.aiService.completion(prompt);
-    const content: LessonScriptLine[] = JSON.parse(aiResponse.message.content);
+    const content: {
+      sequence: number;
+      text: string;
+      languageCode: string;
+    }[] = JSON.parse(aiResponse.message.content);
     const afterSplit = [];
     content.forEach((line) =>
       afterSplit.push(...splitTextByJapanese(line.text)),
     );
 
-    const lessonLines: LessonScriptLine[] = afterSplit.map((line, index) => ({
-      ...line,
-      sequence: index + 1,
-      text: line.text.replaceAll("'", ''),
-    }));
-    console.timeEnd('generateLesson:ai_completion');
+    const lessonLines = afterSplit
+      .filter(
+        (line) => !INVALID_LINES.includes(line.text.replaceAll("'", '').trim()),
+      )
+      .map((line, index) => ({
+        ...line,
+        sequence: index + 1,
+        text: line.text.replaceAll("'", '').trim(),
+      }));
 
-    console.time('generateLesson:tts_generation');
-    for (const line of lessonLines) {
-      try {
-        // create a payload object to be sent to the TTS service
-        const text = line.text;
-        const voiceOptions: VoiceOptions = VoiceOptionsMap.get(
-          line.languageCode,
-        );
-        const extraOptions = {
-          folder: `lesson-audios/${code}`,
-          filename: `${code}-${line.sequence.toString().padStart(3, '0')}.mp3`,
-        };
+    await this.prisma.lessonLine.createMany({
+      data: lessonLines.map((line) => ({
+        languageCode: line.languageCode,
+        order: line.sequence,
+        text: line.text,
+        lessonId: lesson.id,
+      })),
+    });
 
-        if (lessonLines.indexOf(line) === 0) {
-          this.ttsQueue.add(code, {
-            input: text,
-            voiceOptions,
-            extraOptions,
-          });
-        }
+    const lines = await this.prisma.lessonLine.findMany({
+      where: { lessonId: lesson.id },
+      orderBy: { order: 'asc' },
+    });
 
-        const filepath = await this.ttsService.generate(
-          text,
-          voiceOptions,
-          extraOptions,
-        );
-        // send the file generate to the bucket service to be uploaded to the cloud storage...
-        this.bucketService.upload(filepath, {
-          basepath: `lesson-audios/${code}`,
-          contentType: 'audio/mp3',
-          public: true,
-        });
-      } catch (_err) {
-        const err = _err as Error;
-        this.logger.error(
-          `Error generating audio for line ${line.sequence}: ${err.message}`,
-        );
-      }
-    }
-    console.timeEnd('generateLesson:tts_generation');
-
-    const folderPath = this.fileService.getOrCreateFolder('lesson-audios');
-    await writeFile(
-      `${folderPath}/${code}.json`,
-      JSON.stringify(lessonLines, null, 2),
-    );
-
-    // const audioUrl = await this.bucketService.upload(filepath, {
-    //   basepath: 'audio-cards/',
-    //   contentType: 'audio/mp3',
-    //   public: true,
-    // });
+    await this.addLessonLineToTTSQueue(code, lines);
 
     return {
-      code,
-      name,
-      subject,
-      lines: lessonLines,
-      total: lessonLines.length,
+      ...lesson,
+      lines,
     };
   }
 
-  async tts() {
-    const code = generateCode();
-
-    this.ttsQueue.add(code, {
-      input: 'こんにちは、私は日本語を話すことができます。',
-      voiceOptions: VoiceOptionsMap.get(LanguageCode.JA_JP),
-      extraOptions: {
-        folder: `lesson-audios/${code}`,
-        filename: 'ja-JP-audio.mp3',
-      },
-    });
-
-    this.ttsQueue.add(code, {
-      input: 'What exactly do you like about me, honey?',
-      voiceOptions: VoiceOptionsMap.get(LanguageCode.EN_US),
-      extraOptions: {
-        folder: `lesson-audios/${code}`,
-        filename: 'en-US-audio.mp3',
-      },
-    });
-
-    return {
-      code,
-    };
+  private async addLessonLineToTTSQueue(
+    codeLesson: string,
+    lines: LessonLine[],
+  ) {
+    await this.ttsQueue.addBulk(
+      lines.map((line) => ({
+        name: line.id,
+        data: {
+          input: line.text,
+          voiceOptions: VoiceOptionsMap.get(line.languageCode),
+          extraOptions: {
+            folder: `audio-lessons/${codeLesson}`,
+            filename: `${codeLesson}-${line.order.toString().padStart(3, '0')}.mp3`,
+            uploadOptions: {
+              basepath: `audio-lessons/${codeLesson}/`,
+              contentType: 'audio/mp3',
+              public: true,
+            },
+          },
+          output: {
+            returnChannel: 'lesson_tts_completed',
+            lessonLineId: line.id,
+          },
+        },
+        opts: {
+          attempts: 10,
+          backoff: {
+            type: 'exponential',
+            delay: 1000,
+          },
+        },
+      })),
+    );
   }
 }

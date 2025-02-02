@@ -1,21 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { CardType } from '@prisma/client';
+import { CardType, Flashcard } from '@prisma/client';
 import { PrismaService } from '../../../infraestructure/database/prisma/prisma.service';
 import { AiChatService } from '../../../core/abstract/cloud/ai-chat.service';
-import { BucketService } from '../../../core/abstract/cloud/bucket.service';
-import { TextToSpeechService } from '../../../core/abstract/cloud/text-to-speech.service';
-import { LoggerService } from '../../../core/abstract/logger-service';
 import { GenerateCardDto } from './dto/generate-card.dto';
-import { LanguageCode } from '../../../core/constants/language-code';
+import { Queue } from 'bullmq';
+import { InjectQueue } from '@nestjs/bullmq';
+import { TTSQueuePayload } from '../../../../../../packages/shared/dist';
+import { VoiceOptionsMap } from '@monorepo/shared/dist/core/constants';
+import { LoggerService } from '@monorepo/shared';
+
+type CardTTSPayload = TTSQueuePayload<{
+  returnChannel: string;
+  cardId: string;
+}>;
 
 @Injectable()
 export class CardService {
   constructor(
     private prisma: PrismaService,
     private aiService: AiChatService,
-    private bucketService: BucketService,
-    private ttsService: TextToSpeechService,
     private logger: LoggerService,
+    @InjectQueue('tts')
+    private ttsQueue: Queue<CardTTSPayload>,
   ) {
     logger.setContext(CardService.name);
     this.generateAudioIfNull();
@@ -27,27 +33,13 @@ export class CardService {
         audioUrl: null,
       },
     });
-    for (const card of cards) {
-      const filepath = await this.ttsService.generate(card.hiragana, {
-        languageCode: LanguageCode.JA_JP,
-        ssmlGender: 'FEMALE',
-        name: 'ja-JP-Neural2-B',
-      });
-      const audioUrl = await this.bucketService.upload(filepath, {
-        basepath: 'audio-cards/',
-        contentType: 'audio/mp3',
-        public: true,
-      });
-      await this.prisma.flashcard.update({
-        data: { audioUrl },
-        where: { id: card.id },
-      });
-      this.logger.log(`Audio generated to ${card.hiragana} card.`);
-    }
+
+    await this.addCardToTTSQueue(...cards);
+    if (cards.length > 0)
+      this.logger.log(`Audio generation queued for ${cards.length} cards.`);
   }
 
   async generateFlashcards({ quantity, complexity, context }: GenerateCardDto) {
-    // Step 1: Request flashcard content from AI, asking for structured JSON output
     const hiraganas = await this.prisma.flashcard.findMany({
       where: {
         complexity,
@@ -85,28 +77,14 @@ export class CardService {
     // Step 2: Parse the AI's JSON response
     const suggestions = this.parseAiResponse(aiResponse.message.content);
 
-    // Step 3: Save each suggestion as a new flashcard in the database
     const flashcards = [];
 
     for (const suggestion of suggestions) {
-      // Step 2: Check for duplicates based on hiragana field
       const existingCard = await this.prisma.flashcard.findUnique({
         where: { hiragana: suggestion.hiragana },
       });
 
       if (!existingCard) {
-        // Step 3: If no duplicate found, create the new flashcard
-        const filepath = await this.ttsService.generate(suggestion.hiragana, {
-          languageCode: LanguageCode.JA_JP,
-          ssmlGender: 'FEMALE',
-          name: 'ja-JP-Neural2-B',
-        });
-        const audioUrl = await this.bucketService.upload(filepath, {
-          basepath: 'audio-cards/',
-          contentType: 'audio/mp3',
-          public: true,
-        });
-
         const flashcard = await this.prisma.flashcard.create({
           data: {
             hiragana: suggestion.hiragana,
@@ -114,12 +92,14 @@ export class CardService {
             type: suggestion.type as CardType,
             complexity: complexity,
             explanation: suggestion.explanation || null,
-            audioUrl,
           },
         });
+
+        await this.addCardToTTSQueue(flashcard);
         flashcards.push(flashcard);
         this.logger.log(`New card generated ${suggestion.hiragana}`);
       } else {
+        flashcards.push(existingCard);
         this.logger.log(`Duplicated card ${suggestion.hiragana}`);
       }
     }
@@ -158,6 +138,38 @@ export class CardService {
 
     const aiResponse = await this.aiService.completion(prompt);
     return aiResponse.message.content;
+  }
+
+  private async addCardToTTSQueue(...cards: Flashcard[]) {
+    await this.ttsQueue.addBulk(
+      cards.map((card) => ({
+        name: card.id,
+        data: {
+          input: card.hiragana,
+          voiceOptions: VoiceOptionsMap.get('ja-JP'),
+          extraOptions: {
+            folder: 'audio-cards/',
+            filename: card.hiragana,
+            uploadOptions: {
+              basepath: 'audio-cards/',
+              contentType: 'audio/mp3',
+              public: true,
+            },
+          },
+          output: {
+            returnChannel: 'card_tts_completed',
+            cardId: card.id,
+          },
+        },
+        opts: {
+          attempts: 10,
+          backoff: {
+            type: 'exponential',
+            delay: 1000,
+          },
+        },
+      })),
+    );
   }
 }
 
