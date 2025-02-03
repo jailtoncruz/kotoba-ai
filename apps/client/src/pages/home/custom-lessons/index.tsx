@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { listLessons } from "../../../shared/services/api/lesson";
-import { CreateLessonDialog } from "./create";
+import { CreateLessonDialog } from "./components/create";
 
 export function CustomLessons() {
   const { data: lessons, isLoading } = useQuery({

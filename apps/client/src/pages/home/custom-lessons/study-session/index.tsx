@@ -13,8 +13,9 @@ import {
   FiAlignLeft,
 } from "react-icons/fi";
 import { LessonLineDto } from "../../../../core/interfaces/lesson-line.dto";
-import { Form } from "radix-ui";
 import { Button, Slider } from "@radix-ui/themes";
+import { LessonOptions } from "../components/lesson-options";
+import { LessonLine } from "../components/lesson-line";
 
 export function StudySession() {
   const { id } = useParams<{ id: string }>();
@@ -41,7 +42,7 @@ export function StudySession() {
     const newState = !isAutoNext;
     setIsAutoNext(newState);
 
-    if (!selectedLine && lesson) onLineClick(lesson.lines[0]);
+    if (!selectedLine && lesson) onClickLine(lesson.lines[0]);
 
     if (audio) {
       const isPlaying = !audio.paused;
@@ -54,7 +55,7 @@ export function StudySession() {
     }
   };
 
-  const onLineClick = useCallback(
+  const onClickLine = useCallback(
     (line: LessonLineDto) => {
       setSelectedLine(line);
 
@@ -75,14 +76,14 @@ export function StudySession() {
 
   const nextLine = () => {
     const nextLine = getNextLine();
-    if (nextLine) onLineClick(nextLine);
+    if (nextLine) onClickLine(nextLine);
   };
 
   const previousLine = () => {
     if (selectedLine) {
       const currentIndex = lesson?.lines.indexOf(selectedLine) ?? 1;
       const prevLine = lesson?.lines[Number(currentIndex - 1)];
-      if (prevLine) onLineClick(prevLine);
+      if (prevLine) onClickLine(prevLine);
     }
   };
 
@@ -91,7 +92,7 @@ export function StudySession() {
       audio.onended = () => {
         if (isAutoNext) {
           const nextLine = getNextLine();
-          if (nextLine) setTimeout(() => onLineClick(nextLine), nextAudioDelay);
+          if (nextLine) setTimeout(() => onClickLine(nextLine), nextAudioDelay);
           else {
             setSelectedLine(undefined);
             setIsAutoNext(false);
@@ -99,7 +100,7 @@ export function StudySession() {
         }
       };
     }
-  }, [isAutoNext, audio, getNextLine, onLineClick, nextAudioDelay]);
+  }, [isAutoNext, audio, getNextLine, onClickLine, nextAudioDelay]);
 
   useEffect(() => {
     return function cleanup() {
@@ -120,20 +121,11 @@ export function StudySession() {
         </button>
 
         <h1 className="text-xl font-bold flex-1">{lesson?.title}</h1>
-        <Form.Root className="space-y-4">
-          <Form.Field name="delay" className="flex flex-row items-center gap-2">
-            <Form.Label className="block text-gray-300">Delay</Form.Label>
-            <Form.Control asChild>
-              <input
-                type="number"
-                value={nextAudioDelay}
-                onChange={(e) => setNextAudioDelay(Number(e.target.value))}
-                required
-                className="w-full p-2 bg-gray-800 border border-gray-600 rounded-lg text-gray-100 focus:outline-none focus:ring focus:border-blue-500"
-              />
-            </Form.Control>
-          </Form.Field>
-        </Form.Root>
+
+        <LessonOptions
+          nextAudioDelay={nextAudioDelay}
+          setNextAudioDelay={setNextAudioDelay}
+        />
       </div>
 
       <div
@@ -143,22 +135,11 @@ export function StudySession() {
         }}
       >
         {lesson?.lines.map((line) => (
-          <div
-            key={line.id}
-            onClick={() => onLineClick(line)}
-            className="cursor-pointer flex-wrap"
-            id={line.id}
-          >
-            <p
-              className={`transition-all text-2xl relative max-w-[700px] ${
-                selectedLine?.id === line.id
-                  ? "scale-125 text-white left-[89px]"
-                  : "text-gray-400 left-0"
-              }`}
-            >
-              {line.text}
-            </p>
-          </div>
+          <LessonLine
+            isSelected={selectedLine?.id === line.id}
+            line={line}
+            onClick={onClickLine}
+          />
         ))}
       </div>
 
