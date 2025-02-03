@@ -1,7 +1,7 @@
-import { Button } from "../../../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { listLessons } from "../../../shared/services/api/lesson";
+import { CreateLessonDialog } from "./create";
 
 export function CustomLessons() {
   const { data: lessons, isLoading } = useQuery({
@@ -13,14 +13,12 @@ export function CustomLessons() {
   if (isLoading) return <div>Loading...</div>;
 
   return (
-    <div className="bg-gray-900 text-white flex flex-col flex-1 px-2">
-      {/* Header */}
+    <div className="bg-gray-900 text-white flex flex-col flex-1 m-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-xl font-bold">Custom Lessons</h1>
-        <Button onClick={() => navigate("create")}>New Custom Lesson</Button>
+        <CreateLessonDialog />
       </div>
 
-      {/* Main Content */}
       <div className="grid grid-cols-1 gap-4">
         {lessons?.map((lesson) => {
           return (
