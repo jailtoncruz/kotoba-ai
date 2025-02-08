@@ -136,6 +136,7 @@ export function StudySession() {
       >
         {lesson?.lines.map((line) => (
           <LessonLine
+            key={line.id}
             isSelected={selectedLine?.id === line.id}
             line={line}
             onClick={onClickLine}

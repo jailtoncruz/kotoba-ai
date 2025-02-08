@@ -31,7 +31,9 @@ export function LessonLine({ line, onClick, isSelected }: LessonLineProps) {
       <ContextMenu.Content>
         <ContextMenu.Item>Details</ContextMenu.Item>
         <ContextMenu.Item>Add to Deck</ContextMenu.Item>
-        <ContextMenu.Item>Explain</ContextMenu.Item>
+        <ContextMenu.Item disabled={line.languageCode !== "ja-JP"}>
+          Explain
+        </ContextMenu.Item>
       </ContextMenu.Content>
     </ContextMenu.Root>
   );

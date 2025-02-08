@@ -17,7 +17,7 @@ export class ListenerController {
     @Payload() { data }: { data: { cardId: string; audioUrl: string } },
   ) {
     this.logger.log(`tts_completed: ${data.cardId}`);
-    await this.prisma.flashcard.update({
+    await this.prisma.card.update({
       data: { audioUrl: data.audioUrl },
       where: { id: data.cardId },
     });

@@ -19,13 +19,13 @@ export class PracticeSessionService {
           lte: new Date(),
         },
       },
-      include: { flashcard: true },
+      include: { card: true },
       orderBy: [{ nextReviewDate: 'asc' }, { proficiency: 'asc' }],
       take: 10,
     });
 
     // Fetch up to 10 unseen cards ordered by complexity
-    const unseenCards = await this.prisma.flashcard.findMany({
+    const unseenCards = await this.prisma.card.findMany({
       where: { progress: { none: { userId } } },
       orderBy: { complexity: 'asc' },
       take: 10,
@@ -36,8 +36,7 @@ export class PracticeSessionService {
 
     if (selectForReview && reviewCards.length > 0) {
       // Randomly select one of the due-for-review cards
-      return reviewCards[Math.floor(Math.random() * reviewCards.length)]
-        .flashcard;
+      return reviewCards[Math.floor(Math.random() * reviewCards.length)].card;
     } else if (unseenCards.length > 0) {
       // Randomly select one of the unseen cards
       const card = unseenCards[Math.floor(Math.random() * unseenCards.length)];
@@ -52,7 +51,7 @@ export class PracticeSessionService {
   async reviewCard(userId: string, cardId: string, rating: number) {
     let userProgress = await this.prisma.userProgress.findUnique({
       where: {
-        userId_flashcardId: { userId, flashcardId: cardId },
+        userId_cardId: { userId, cardId: cardId },
       },
     });
 
@@ -61,7 +60,7 @@ export class PracticeSessionService {
       userProgress = await this.prisma.userProgress.create({
         data: {
           userId,
-          flashcardId: cardId,
+          cardId: cardId,
           proficiency: 0,
           lastReviewed: new Date(),
           nextReviewDate: new Date(),
@@ -83,7 +82,7 @@ export class PracticeSessionService {
 
     await this.prisma.userProgress.update({
       where: {
-        userId_flashcardId: { userId, flashcardId: cardId },
+        userId_cardId: { userId, cardId: cardId },
       },
       data: {
         proficiency: newProficiency,

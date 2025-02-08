@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CardType, Flashcard } from '@prisma/client';
+import { CardType, Card } from '@prisma/client';
 import { PrismaService } from '../../../infraestructure/database/prisma/prisma.service';
 import { AiChatService } from '../../../core/abstract/cloud/ai-chat.service';
 import { GenerateCardDto } from './dto/generate-card.dto';
@@ -28,7 +28,7 @@ export class CardService {
   }
 
   async generateAudioIfNull() {
-    const cards = await this.prisma.flashcard.findMany({
+    const cards = await this.prisma.card.findMany({
       where: {
         audioUrl: null,
       },
@@ -40,11 +40,11 @@ export class CardService {
   }
 
   async generateFlashcards({ quantity, complexity, context }: GenerateCardDto) {
-    const hiraganas = await this.prisma.flashcard.findMany({
+    const hiraganas = await this.prisma.card.findMany({
       where: {
         complexity,
       },
-      select: { hiragana: true },
+      select: { text: true },
       take: 50,
       orderBy: { createdAt: 'desc' },
     });
@@ -77,36 +77,37 @@ export class CardService {
     // Step 2: Parse the AI's JSON response
     const suggestions = this.parseAiResponse(aiResponse.message.content);
 
-    const flashcards = [];
+    const cards = [];
 
     for (const suggestion of suggestions) {
-      const existingCard = await this.prisma.flashcard.findUnique({
-        where: { hiragana: suggestion.hiragana },
+      const existingCard = await this.prisma.card.findUnique({
+        where: { text: suggestion.hiragana },
       });
 
       if (!existingCard) {
-        const flashcard = await this.prisma.flashcard.create({
+        const card = await this.prisma.card.create({
           data: {
-            hiragana: suggestion.hiragana,
+            text: suggestion.hiragana,
             meaning: suggestion.meaning,
+            language: 'jp-JP',
             type: suggestion.type as CardType,
             complexity: complexity,
             explanation: suggestion.explanation || null,
           },
         });
 
-        await this.addCardToTTSQueue(flashcard);
-        flashcards.push(flashcard);
+        await this.addCardToTTSQueue(card);
+        cards.push(card);
         this.logger.log(`New card generated ${suggestion.hiragana}`);
       } else {
-        flashcards.push(existingCard);
+        cards.push(existingCard);
         this.logger.log(`Duplicated card ${suggestion.hiragana}`);
       }
     }
 
-    this.logger.log(`${flashcards.length} cards generated.`);
+    this.logger.log(`${cards.length} cards generated.`);
 
-    return flashcards;
+    return cards;
   }
 
   private parseAiResponse(response: string): Array<AiCardDto> {
@@ -120,9 +121,9 @@ export class CardService {
   }
 
   async explain(card_id: string) {
-    const card = await this.prisma.flashcard.findUnique({
+    const card = await this.prisma.card.findUnique({
       where: { id: card_id },
-      select: { hiragana: true },
+      select: { text: true },
     });
 
     const prompt = [
@@ -132,7 +133,7 @@ export class CardService {
       },
       {
         role: 'user',
-        content: `Explain me what's mean this "${card.hiragana}"? `,
+        content: `Explain me what's mean this "${card.text}"? `,
       },
     ];
 
@@ -140,16 +141,16 @@ export class CardService {
     return aiResponse.message.content;
   }
 
-  private async addCardToTTSQueue(...cards: Flashcard[]) {
+  private async addCardToTTSQueue(...cards: Card[]) {
     await this.ttsQueue.addBulk(
       cards.map((card) => ({
         name: card.id,
         data: {
-          input: card.hiragana,
+          input: card.text,
           voiceOptions: VoiceOptionsMap.get('ja-JP'),
           extraOptions: {
             folder: 'audio-cards/',
-            filename: card.hiragana,
+            filename: card.text,
             uploadOptions: {
               basepath: 'audio-cards/',
               contentType: 'audio/mp3',
