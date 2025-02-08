@@ -10,6 +10,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from '../../infraestructure/guards/auth.guard';
 import { PracticeSessionModule } from './practice-session/practice-session.module';
 import { LessonModule } from './lesson/lesson.module';
+import { DeckModule } from './deck/deck.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { LessonModule } from './lesson/lesson.module';
     }),
     PracticeSessionModule,
     LessonModule,
+    DeckModule,
   ],
   providers: [
     JwtStrategy,

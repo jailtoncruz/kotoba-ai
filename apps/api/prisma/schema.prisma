@@ -8,25 +8,24 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name      String?
-  email     String   @unique
-  password  String
-
-  // One-to-many relation with UserProgress
-  progress UserProgress[]
-
-  // One-to-many relation with ReviewHistory
+  id            String          @id @default(uuid())
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  name          String?
+  email         String          @unique
+  password      String
+  progress      UserProgress[]
   reviewHistory ReviewHistory[]
   lessons       Lesson[]
+  decks         Deck[]
 }
 
 model Deck {
   id       String @id @default(uuid())
   name     String
   language String
+  userId   String
+  owner    User   @relation(fields: [userId], references: [id])
   cards    Card[]
 }
 
