@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - '5444:5432'
+    environment:
+      - POSTGRES_DB=jpteacher
+      - POSTGRES_USER=jpteacher
+      - POSTGRES_PASSWORD=jpteacher
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - ./data/postgresql:/var/lib/postgresql/data
+
+  nats:
+    image: nats
+    restart: always
+    ports:
+      - '4222:4222'
+      - '6222:6222'
+      - '8222:8222'

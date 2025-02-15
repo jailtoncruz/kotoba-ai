@@ -1,4 +1,4 @@
-# Nest + React Template
+# Ai Japanese Teacher
 
 This repository is a template to run NestJS with React (Vite) as a monorepo.
 

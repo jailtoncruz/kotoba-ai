@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // adjust this to your database provider
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(uuid())
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  name          String?
+  email         String          @unique
+  password      String
+  progress      UserProgress[]
+  reviewHistory ReviewHistory[]
+  lessons       Lesson[]
+  decks         Deck[]
+}
+
+model Deck {
+  id       String @id @default(uuid())
+  name     String
+  language String
+  userId   String
+  owner    User   @relation(fields: [userId], references: [id])
+  cards    Card[]
+}
+
+model Card {
+  id            String          @id @default(uuid())
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  text          String          @unique()
+  language      String
+  meaning       String?
+  audioUrl      String?
+  type          CardType // e.g., "word" or "phrase"
+  complexity    Int // 1 for basic, increase for more complex words
+  explanation   String? // additional info for phrases or complex grammar
+  progress      UserProgress[]
+  reviewHistory ReviewHistory[]
+  deckId        String?         @map("deck_id")
+  deck          Deck?           @relation(fields: [deckId], references: [id])
+}
+
+model UserProgress {
+  id             String    @id @default(uuid())
+  createdAt      DateTime  @default(now())
+  userId         String
+  cardId         String
+  proficiency    Int // e.g., 0 = unfamiliar, increases as user masters
+  lastReviewed   DateTime? // date of the last review
+  nextReviewDate DateTime? // date when this card should be reviewed again
+
+  user User @relation(fields: [userId], references: [id])
+  card Card @relation(fields: [cardId], references: [id])
+
+  @@unique([userId, cardId]) // Composite unique key to avoid duplicate progress entries
+}
+
+model ReviewHistory {
+  id         String     @id @default(uuid())
+  createdAt  DateTime   @default(now())
+  userId     String
+  cardId     String
+  reviewType ReviewType // e.g., "reviewed" or "mastered"
+
+  user User @relation(fields: [userId], references: [id])
+  card Card @relation(fields: [cardId], references: [id])
+}
+
+enum CardType {
+  WORD
+  PHRASE
+}
+
+enum ReviewType {
+  REVIEWED
+  MASTERED
+}
+
+model Lesson {
+  id           String       @id @default(uuid())
+  code         String       @unique
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  title        String
+  description  String
+  observations String?
+  authorId     String
+  deleted      Boolean      @default(false)
+  author       User         @relation(fields: [authorId], references: [id])
+  lines        LessonLine[]
+}
+
+model LessonLine {
+  id           String   @id @default(uuid())
+  lessonId     String
+  order        Int
+  languageCode String // en-US, ja-JP, etc.
+  text         String
+  audioUrl     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  lesson       Lesson   @relation(fields: [lessonId], references: [id])
+}

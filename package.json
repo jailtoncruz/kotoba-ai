@@ -1,5 +1,5 @@
 {
-  "name": "nest-react-template",
+  "name": "ai-jp-teacher",
   "devDependencies": {
     "turbo": "^2.1.2"
   },
@@ -11,5 +11,5 @@
     "build": "turbo run build",
     "start": "node apps/api/dist/main"
   },
-  "packageManager": "npm@10.2.4"
+  "packageManager": "pnpm@9.0.4"
 }
