@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { HomeRoutes } from "./Home.routes";
+import { HomeRoutes } from "./home.routes";
 import { useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { Menu } from "./Menu";
