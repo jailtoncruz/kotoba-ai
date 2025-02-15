@@ -10,7 +10,7 @@ import { LoggerModule } from '@monorepo/shared';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: resolve(process.cwd(), '..', 'client', 'dist'),
+      rootPath: resolve('apps', 'client', 'dist'),
     }),
     ControllerModule,
     LoggerModule.forRoot(),
