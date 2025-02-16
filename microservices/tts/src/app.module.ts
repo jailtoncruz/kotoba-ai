@@ -3,17 +3,27 @@ import { AppController } from './app.controller';
 import { TTSProcessor } from './services/tts.processor';
 import { BullModule } from '@nestjs/bullmq';
 
-import { CloudModule, EnvironmentModule } from '@monorepo/shared';
+import {
+  CloudModule,
+  EnvironmentModule,
+  EnvironmentService,
+} from '@monorepo/shared';
 import { LoggerModule } from '@monorepo/shared';
 import { ClientProxy, ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
-    BullModule.forRoot({
-      connection: {
-        host: 'localhost',
-        port: 6379,
-      },
+    BullModule.forRootAsync({
+      useFactory: (env: EnvironmentService) => ({
+        connection: {
+          host: env.get('REDIS_HOST') ?? 'localhost',
+          port: Number(env.get('REDIS_PORT') ?? 6379),
+          username: env.get('REDIS_USERNAME'),
+          password: env.get('REDIS_PASSWORD'),
+        },
+      }),
+      imports: [EnvironmentModule],
+      inject: [EnvironmentService],
     }),
     BullModule.registerQueue({
       name: 'tts',
@@ -21,16 +31,22 @@ import { ClientProxy, ClientsModule, Transport } from '@nestjs/microservices';
     LoggerModule.forRoot(),
     CloudModule,
     EnvironmentModule.forRoot(),
-    ClientsModule.register([
-      {
-        name: 'TTS_SERVICE',
-        transport: Transport.NATS,
-        options: {
-          servers: ['nats://localhost:4222'],
-          queue: 'tts_queue',
+    ClientsModule.registerAsync({
+      clients: [
+        {
+          name: 'TTS_SERVICE',
+          useFactory: (env: EnvironmentService) => ({
+            transport: Transport.NATS,
+            options: {
+              servers: [env.get('NATS_SERVER') ?? 'nats://localhost:4222'],
+              queue: 'tts_queue',
+            },
+          }),
+          imports: [EnvironmentModule],
+          inject: [EnvironmentService],
         },
-      },
-    ]),
+      ],
+    }),
   ],
   controllers: [AppController],
   providers: [TTSProcessor],
