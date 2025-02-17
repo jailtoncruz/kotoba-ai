@@ -35,16 +35,13 @@ import { ClientProxy, ClientsModule, Transport } from '@nestjs/microservices';
       clients: [
         {
           name: 'TTS_SERVICE',
-          useFactory: (env: EnvironmentService) => {
-            console.log('factory', env.get('NATS_SERVER'));
-            return {
-              transport: Transport.NATS,
-              options: {
-                servers: [env.get('NATS_SERVER') ?? 'nats://localhost:4222'],
-                queue: 'tts_queue',
-              },
-            };
-          },
+          useFactory: (env: EnvironmentService) => ({
+            transport: Transport.NATS,
+            options: {
+              servers: [env.get('NATS_SERVER') ?? 'nats://localhost:4222'],
+              queue: 'tts_queue',
+            },
+          }),
           imports: [EnvironmentModule],
           inject: [EnvironmentService],
         },
