@@ -8,8 +8,6 @@ async function bootstrap() {
   const env = base.get(EnvironmentService);
   const natsServer = env.get('NATS_SERVER') ?? 'nats://localhost:4222';
 
-  console.log('---', natsServer);
-
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {

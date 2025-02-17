@@ -12,8 +12,6 @@ async function bootstrap() {
   const natsServer =
     environmentService.get('NATS_SERVER') ?? 'nats://localhost:4222';
 
-  console.log('---', natsServer);
-
   app.setGlobalPrefix('api');
   app.get(SwaggerService).init(app);
   app.useGlobalPipes(new ValidationPipe());
