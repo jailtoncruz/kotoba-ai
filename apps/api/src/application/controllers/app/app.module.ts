@@ -11,7 +11,7 @@ import { EnvironmentService } from 'src/infraestructure/config/environment/envir
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: resolve('apps', 'client', 'dist'),
+      rootPath: resolve('..', 'client', 'dist'),
     }),
     ControllerModule,
     LoggerModule.forRoot(),
