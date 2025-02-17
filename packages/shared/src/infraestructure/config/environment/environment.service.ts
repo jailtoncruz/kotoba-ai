@@ -12,10 +12,6 @@ export class EnvironmentService {
     return this.configService.get('NODE_ENV') as NodeEnvironemnt;
   }
 
-  getServerPort() {
-    return Number(this.configService.get('SERVER_PORT') ?? 3000);
-  }
-
   isProduction(): boolean {
     return this.getNodeEnvironment() === 'production';
   }

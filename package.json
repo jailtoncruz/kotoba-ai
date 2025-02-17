@@ -10,7 +10,8 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "prisma:dev": "turbo run prisma:dev",
-    "start": "turbo run start"
+    "start": "turbo run start",
+    "start:prod": "node apps/api/dist/main"
   },
   "packageManager": "pnpm@9.0.4"
 }
