@@ -7,11 +7,12 @@ import { SwaggerService } from '../../../infraestructure/config/swagger/swagger.
 import { BullModule } from '@nestjs/bullmq';
 import { LoggerModule } from '@monorepo/shared';
 import { EnvironmentService } from 'src/infraestructure/config/environment/environment.service';
+import { PRODUCTION_MODE } from 'src/infraestructure/config/environment/contants';
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: resolve('..', 'client', 'dist'),
+      rootPath: resolve(process.cwd(), 'apps', 'client', 'dist'),
     }),
     ControllerModule,
     LoggerModule.forRoot(),
