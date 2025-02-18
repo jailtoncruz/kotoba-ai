@@ -9,10 +9,14 @@ import { LoggerModule } from '@monorepo/shared';
 import { EnvironmentService } from 'src/infraestructure/config/environment/environment.service';
 import { PRODUCTION_MODE } from 'src/infraestructure/config/environment/contants';
 
+const ServeStaticPath = PRODUCTION_MODE
+  ? resolve('apps', 'client', 'dist')
+  : resolve('..', 'client', 'dist');
+
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: resolve(process.cwd(), 'apps', 'client', 'dist'),
+      rootPath: ServeStaticPath,
     }),
     ControllerModule,
     LoggerModule.forRoot(),
