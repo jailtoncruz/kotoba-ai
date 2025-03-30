@@ -7,11 +7,13 @@ export default {
         primary: "#E63946",  // Vermilion Red
         accent: "#F697AA",   // Sakura Pink
         background: "#FAF3E0", // Off-White
+        title: "#C54B63" // Dark Sakura Pink
       },
       fontFamily: {
         zen: ["Zen Maru Gothic", "sans-serif"],
         noto: ["Noto Sans", "sans-serif"],
         montserrat: ["Montserrat", "sans-serif"],
+        mochiy: ['"Mochiy Pop One"', 'sans-serif'],
       },
       keyframes: {
         flip: {

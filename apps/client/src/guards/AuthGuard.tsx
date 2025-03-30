@@ -1,14 +1,6 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
-const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export function AuthGuard() {
   const isAuthenticated = !!localStorage.getItem("authToken");
-
-  if (!isAuthenticated) {
-    return <Navigate to="/sign-in" replace />;
-  }
-
-  return <>{children}</>;
-};
-
-export default AuthGuard;
+  return !isAuthenticated ? <Navigate to="/sign-in" replace /> : <Outlet />;
+}

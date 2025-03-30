@@ -1,8 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 
-function LoginGuard() {
+export function LoginGuard() {
   const isAuthenticated = !!localStorage.getItem("authToken");
   return isAuthenticated ? <Navigate to="/home" replace /> : <Outlet />;
-};
-
-export default LoginGuard;
+}

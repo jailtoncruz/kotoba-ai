@@ -13,7 +13,7 @@ function MenuItem({
 }) {
   return (
     <li className="mb-4">
-      <Link to={to} className="text-gray-100 hover:text-white">
+      <Link to={to} className="text-gray-800 hover:text-gray-600">
         {children}
       </Link>
     </li>
@@ -23,7 +23,7 @@ function MenuItem({
 export function Menu({ isMenuOpen }: MenuProps) {
   return (
     <aside
-      className={`bg-gray-800 transform ${isMenuOpen ? "w-64 p-4 translate-x-0" : "w-0 p-0 -translate-x-64"} transition-all duration-300`}
+      className={`transform ${isMenuOpen ? "w-64 p-4 translate-x-0" : "w-0 p-0 -translate-x-64"} transition-all duration-300`}
     >
       <nav>
         <ul>
