@@ -1,9 +1,9 @@
 import { FiPlay, FiStopCircle } from "react-icons/fi";
-import { convertToRomaji } from "../../../shared/utils/hiragana-to-romaji";
+import { convertToRomaji } from "../../../utils/hiragana-to-romaji";
 import { Flashcard } from "./Practice";
 import { ReviewCardOptions } from "./ReviewOptions";
 import { useEffect, useState } from "react";
-import { api } from "../../../shared/services/api";
+import { api } from "../../../services/api";
 
 interface CardPracticeProps {
   card: Flashcard;

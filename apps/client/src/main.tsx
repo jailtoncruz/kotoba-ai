@@ -5,10 +5,11 @@ import App from "./App.tsx";
 
 import "@radix-ui/themes/styles.css";
 import "./styles/index.css";
+import "./i18n";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Theme appearance="dark">
+    <Theme>
       <App />
     </Theme>
   </StrictMode>

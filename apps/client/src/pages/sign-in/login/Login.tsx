@@ -1,81 +1,45 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { Form } from "radix-ui";
+import { Link } from "react-router-dom";
+import { Logo } from "../../../components/Logo";
+import { useTranslation } from "react-i18next";
+import { LoginForm } from "../../../features/sign-in";
+import { Separator } from "@radix-ui/themes";
 
 export function Login() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post("/api/user/login", { email, password });
-      const { token } = response.data;
-      localStorage.setItem("authToken", token); // Store token in local storage
-      navigate("/home"); // Redirect to dashboard or main page
-    } catch (err) {
-      console.error(err);
-      setError("Invalid email or password. Please try again.");
-    }
-  };
-
+  const { t } = useTranslation();
   return (
-    <div className="flex items-center justify-center min-h-screen ">
-      <div className="w-full max-w-md p-8 space-y-4 bg-gray-900 border border-gray-700 rounded-lg shadow-lg">
-        <h2 className="text-xl font-bold text-center text-gray-100 mb-4">
-          Login
-        </h2>
+    <div className="flex-1  flex flex-col items-center justify-center gap-4">
+      <Logo apparence="red" className="md:hidden" />
 
-        {error && (
-          <div className="p-3 text-red-600 bg-red-100 border border-red-400 rounded">
-            {error}
-          </div>
-        )}
-
-        <Form.Root onSubmit={handleLogin} className="space-y-4">
-          <Form.Field name="email">
-            <Form.Label className="block text-gray-300">Email</Form.Label>
-            <Form.Control asChild>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full p-2 bg-gray-800 border border-gray-600 rounded-lg text-gray-100 focus:outline-none focus:ring focus:border-blue-500"
-              />
-            </Form.Control>
-          </Form.Field>
-
-          <Form.Field name="password">
-            <Form.Label className="block text-gray-300">Password</Form.Label>
-            <Form.Control asChild>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full p-2 bg-gray-800 border border-gray-600 rounded-lg text-gray-100 focus:outline-none focus:ring focus:border-blue-500"
-              />
-            </Form.Control>
-          </Form.Field>
-
-          <Form.Submit asChild>
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200"
-            >
-              Login
-            </button>
-          </Form.Submit>
-        </Form.Root>
-        <div className="text-center">
-          <Link to="sign-up" className="text-indigo-500 hover:underline">
-            Don't have an account? Sign up
-          </Link>
+      <div className="flex flex-col px-4 py-8 rounded max-w-[400px] w-full">
+        <p className="text-xl font-bold font-montserrat my-8">
+          {t("signIn.title")}
+        </p>
+        <div className="flex flex-col gap-2">
+          <LoginForm />
         </div>
+        <p className="text-sm text-center mt-2 text-slate-700">
+          Don't have an account?{" "}
+          <Link to="sign-up" className="text-blue-700 cursor-pointer">
+            Sign Up
+          </Link>
+        </p>
+
+        <p className="text-slate-700 text-sm text-center mt-2">
+          {t("signIn.privacyMessage")}
+        </p>
+
+        <Separator className="my-4" size={"4"} />
+
+        <button
+          type="submit"
+          className="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-red-500 transition duration-200"
+        >
+          {t("signIn.guest")}
+        </button>
+
+        <p className="text-slate-700 text-sm text-center mt-4">
+          {t("signIn.noLoginMessage")}
+        </p>
       </div>
     </div>
   );

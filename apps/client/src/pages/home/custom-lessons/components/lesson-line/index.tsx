@@ -1,5 +1,5 @@
 import { ContextMenu } from "@radix-ui/themes";
-import { LessonLineDto } from "../../../../../core/interfaces/lesson-line.dto";
+import { LessonLineDto } from "../../../../../types/interfaces/lesson/lesson-line.dto";
 
 interface LessonLineProps {
   line: LessonLineDto;

@@ -1,0 +1,27 @@
+{
+  "signIn": {
+    "title": "ENTRAR",
+    "message1": "Domine o japonês com flashcards inteligentes e lições interativas!",
+    "message2": "Acompanhe seu progresso e aprenda no seu próprio ritmo!",
+    "privacyMessage": "Respeitamos sua privacidade – seus dados estão seguros conosco.",
+    "guest": "Continuar como convidado (客)",
+    "noLoginMessage": "Experimente nossos flashcards com IA agora – sem necessidade de login!",
+
+    "login": {
+      "title": "Entrar",
+      "email": "E-mail",
+      "password": "Senha"
+    },
+    "signUp": {
+      "title": "Registrar-se",
+      "email": "E-mail",
+      "password": "Senha",
+      "name": "Nome",
+      "haveAccount": "Já tem uma conta?",
+      "welcome": "Bem vindo"
+    }
+  },
+  "copyright": {
+    "title": "Kotoba AI (言葉 AI) © 2025 Jailton Cruz. Todos os direitos reservados."
+  }
+}

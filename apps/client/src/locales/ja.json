@@ -1,0 +1,27 @@
+{
+  "signIn": {
+    "title": "サインイン",
+    "message1": "AI搭載のフラッシュカードと対話型レッスンで日本語をマスターしよう！",
+    "message2": "進捗を確認しながら、自分のペースで学べます！",
+    "privacyMessage": "プライバシーを尊重します – あなたのデータは安全です。",
+    "guest": "ゲストとして続行 (客)",
+    "noLoginMessage": "今すぐAIフラッシュカードを試そう – ログイン不要！",
+
+    "login": {
+      "title": "ログイン",
+      "email": "メールアドレス",
+      "password": "パスワード"
+    },
+    "signUp": {
+      "title": "新規登録",
+      "email": "メールアドレス",
+      "password": "パスワード",
+      "name": "名前",
+      "haveAccount": "すでにアカウントをお持ちですか？",
+      "welcome": "ようこそ"
+    }
+  },
+  "copyright": {
+    "title": "Kotoba AI (言葉 AI) © 2025 Jailton Cruz. All rights reserved."
+  }
+}

@@ -1,8 +1,8 @@
 import { Link, Route, Routes } from "react-router-dom";
 import { Deck } from "./deck";
 import { Practice } from "./practice/Practice";
-import AuthGuard from "../../core/guards/AuthGuard";
 import { LessonsRoutes } from "./custom-lessons/lessons.routes";
+import AuthGuard from "../../guards/AuthGuard";
 
 export function HomeRoutes() {
   return (

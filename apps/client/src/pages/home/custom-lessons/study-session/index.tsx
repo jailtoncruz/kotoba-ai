@@ -1,5 +1,4 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { getLessonById } from "../../../../shared/services/api/lesson";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -12,10 +11,11 @@ import {
   FiVolume,
   FiAlignLeft,
 } from "react-icons/fi";
-import { LessonLineDto } from "../../../../core/interfaces/lesson-line.dto";
+import { LessonLineDto } from "../../../../types/interfaces/lesson/lesson-line.dto";
 import { Button, Slider } from "@radix-ui/themes";
 import { LessonOptions } from "../components/lesson-options";
 import { LessonLine } from "../components/lesson-line";
+import { getLessonById } from "../../../../services/api/lesson";
 
 export function StudySession() {
   const { id } = useParams<{ id: string }>();
