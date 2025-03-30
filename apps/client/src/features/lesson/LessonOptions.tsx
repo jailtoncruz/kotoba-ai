@@ -22,7 +22,7 @@ export function LessonOptions({
     <div>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
-          <Button variant="soft">
+          <Button className="bg-primary">
             Options
             <DropdownMenu.TriggerIcon />
           </Button>

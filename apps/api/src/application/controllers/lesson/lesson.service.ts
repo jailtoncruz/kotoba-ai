@@ -263,8 +263,17 @@ export class LessonService {
 
   async listLessonsByUserId(userId: string) {
     return await this.prisma.lesson.findMany({
-      where: { authorId: userId },
+      where: { authorId: userId, deleted: false },
       orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async deleteLesson(lessonId: string) {
+    await this.prisma.lesson.update({
+      data: {
+        deleted: true,
+      },
+      where: { id: lessonId },
     });
   }
 }

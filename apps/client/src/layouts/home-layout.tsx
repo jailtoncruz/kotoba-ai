@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@radix-ui/themes";
 import logoReduced from "@assets/logo-reduced.svg";
-import { HomeRoutes } from "@pages/home/_home.routes";
+import { HomeRoutes } from "@pages/home/home.routes";
 import LanguageSwitcher from "@components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 
@@ -32,7 +32,7 @@ export function HomeLayout() {
 
   return (
     <div className="min-h-screen flex flex-col text-gray-100">
-      <header className="p-4 flex items-center justify-between">
+      <header className="py-4 flex items-center justify-between max-w-[1200px] mx-auto w-full">
         <Link to="/home">
           <img src={logoReduced} alt="Kotoba AI logo" />
         </Link>
@@ -52,22 +52,20 @@ export function HomeLayout() {
         </Button>
       </header>
 
-      <div className="flex-grow flex">
-        <main
-          className="flex-grow flex flex-col flex-1"
-          style={{ maxHeight: "calc(100vh - 72px)" }}
-        >
-          <HomeRoutes />
-          <footer className="flex flex-col items-center justify-center gap-1 py-1 px-4">
-            <div className="flex flex-row gap-4 items-center">
-              🌐 <LanguageSwitcher />
-            </div>
-            <p className="font-montserrat text-sm text-center text-slate-800">
-              {t("copyright.title")}
-            </p>
-          </footer>
-        </main>
-      </div>
+      <main
+        className="flex-grow flex flex-col flex-1 max-w-[1200px] mx-auto w-full"
+        style={{ maxHeight: "calc(100vh - 76px)" }}
+      >
+        <HomeRoutes />
+        <footer className="flex flex-col items-center justify-center gap-1 py-1 px-4">
+          <div className="flex flex-row gap-4 items-center">
+            🌐 <LanguageSwitcher />
+          </div>
+          <p className="font-montserrat text-sm text-center text-slate-800">
+            {t("copyright.title")}
+          </p>
+        </footer>
+      </main>
     </div>
   );
 }

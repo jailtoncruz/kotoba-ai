@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
-import { Deck } from "./deck";
+import { Deck } from "../deck";
 import { Practice } from "./practice/Practice";
-import { LessonsRoutes } from "./custom-lessons/lessons.routes";
 import { Home } from ".";
+import { Lesson } from "@pages/lesson";
 
 export function HomeRoutes() {
   return (
@@ -10,7 +10,7 @@ export function HomeRoutes() {
       <Route path="/" element={<Home />} />
       <Route path="practice" element={<Practice />} />
       <Route path="deck" element={<Deck />} />
-      <Route path="lessons/*" element={<LessonsRoutes />} />
+      <Route path="lessons/*" element={<Lesson />} />
     </Routes>
   );
 }

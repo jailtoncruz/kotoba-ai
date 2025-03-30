@@ -1,19 +1,24 @@
 import { useLessonsQuery } from "@hooks/useLesson";
-import { Separator } from "@radix-ui/themes";
+import { ScrollArea, Separator } from "@radix-ui/themes";
 import { FiPlay, FiPlayCircle } from "react-icons/fi";
 import { Skeleton } from "@radix-ui/themes";
-import { Link } from "react-router-dom";
+import { HomeLessonLine } from "@features/home/HomeLessonLine";
 
 export function Home() {
   const { data: lessons, isLoading } = useLessonsQuery();
 
   return (
-    <div className="flex flex-1 flex-col px-14 py-4 max-w-[900px] mx-auto w-full">
+    <div
+      className="flex flex-1 flex-col py-4"
+      style={{
+        maxHeight: "calc(100% - 64px)",
+      }}
+    >
       <h1 className="font-mochiy text-title uppercase text-2xl">
         Study your deck
       </h1>
 
-      <div>
+      <div className="flex items-center justify-center">
         <div className="bg-white border-2 border-primary rounded-lg h-48 w-96 my-8 flex flex-col px-4 py-2">
           <div className="flex-1 flex flex-col items-center justify-center">
             <p className="font-noto text-7xl text-slate-800">わたし</p>
@@ -27,10 +32,8 @@ export function Home() {
 
       <Separator size="4" />
 
-      <div className="flex flex-row justify-between items-center">
-        <h1 className="font-mochiy text-title uppercase text-2xl mt-8">
-          LESSONS
-        </h1>
+      <div className="flex flex-row justify-between items-center my-4">
+        <h1 className="font-mochiy text-title uppercase text-2xl">LESSONS</h1>
         <div className="flex flex-row justify-between items-center gap-4">
           <p className="text-purple-600 font-montserrat font-semibold">
             Resume last lesson
@@ -46,43 +49,25 @@ export function Home() {
           />
         </div>
       </div>
-      <div className="flex flex-col my-4 gap-2">
+      <ScrollArea
+        type="hover"
+        scrollbars="vertical"
+        className="flex flex-col gap-2 flex-1"
+      >
         {isLoading ? (
           <>
-            <Skeleton className="h-12 w-full mb-4" />
-            <Skeleton className="h-12 w-full mb-4" />
-            <Skeleton className="h-12 w-full mb-4" />
+            {Array.apply(0, Array(3)).map((_, i) => (
+              <Skeleton className="h-12 w-full mb-4" key={i} />
+            ))}
           </>
         ) : lessons?.length === 0 ? (
           <p>No lessons found.</p>
         ) : (
-          lessons?.slice(0, 4).map((lesson) => (
-            <Link to={`/home/lessons/${lesson.id}`} key={lesson.id}>
-              <div className="flex flex-row justify-between items-center font-montserrat">
-                <p className="font-bold text-slate-800 text-sm ">
-                  {lesson.title}
-                </p>
-                <p className="font-bold text-xs text-slate-700">completed</p>
-              </div>
-              <div className="flex flex-row justify-between gap-4 items-center">
-                <p className="text-sm text-black overflow-hidden text-ellipsis line-clamp-2 max-h-16">
-                  {lesson.description}
-                </p>
-
-                <div className="w-6 h-6 p-[6px] flex justify-center items-center bg-blue-500 hover:bg-blue-400 transition-colors rounded-full cursor-pointer">
-                  <FiPlay
-                    size={16}
-                    color="white"
-                    style={{
-                      fill: "white",
-                    }}
-                  />
-                </div>
-              </div>
-            </Link>
-          ))
+          lessons
+            ?.slice(0, 5)
+            .map((lesson) => <HomeLessonLine lesson={lesson} key={lesson.id} />)
         )}
-      </div>
+      </ScrollArea>
     </div>
   );
 }

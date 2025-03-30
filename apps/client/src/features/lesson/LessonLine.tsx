@@ -1,5 +1,5 @@
 import { ContextMenu } from "@radix-ui/themes";
-import { LessonLineDto } from "../../../../../types/interfaces/lesson/lesson-line.dto";
+import { LessonLineDto } from "@typing/interfaces/lesson/lesson-line.dto";
 
 interface LessonLineProps {
   line: LessonLineDto;
@@ -20,8 +20,8 @@ export function LessonLine({ line, onClick, isSelected }: LessonLineProps) {
           <p
             className={`transition-all text-2xl relative max-w-[700px] ${
               isSelected
-                ? "scale-125 text-white left-[89px]"
-                : "text-gray-400 left-0"
+                ? "scale-125 text-slate-800 font-semibold left-[89px]"
+                : "text-slate-600 font-medium left-0"
             }`}
           >
             {line.text}

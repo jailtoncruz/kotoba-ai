@@ -2,8 +2,8 @@ import React, { useRef, useState } from "react";
 import { Form } from "radix-ui";
 import { Button, Dialog, Flex, Spinner } from "@radix-ui/themes";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CreateLessonDto } from "../../../../../types/interfaces/lesson/create-lesson.dto";
-import { createLesson } from "../../../../../services/api/lesson/create-lesson";
+import { CreateLessonDto } from "../../types/interfaces/lesson/create-lesson.dto";
+import { createLesson } from "../../services/api/lesson/create-lesson";
 
 export function CreateLessonDialog() {
   const queryClient = useQueryClient();
