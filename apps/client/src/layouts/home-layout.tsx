@@ -1,14 +1,29 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { FiMenu, FiX } from "react-icons/fi";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@radix-ui/themes";
 import logoReduced from "@assets/logo-reduced.svg";
-import { Menu } from "@pages/home/Menu";
 import { HomeRoutes } from "@pages/home/_home.routes";
+import LanguageSwitcher from "@components/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
+
+function MenuItem({
+  to,
+  children,
+}: {
+  to: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <li>
+      <Link to={to} className="text-gray-800 hover:text-gray-600">
+        {children}
+      </Link>
+    </li>
+  );
+}
 
 export function HomeLayout() {
   const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -18,15 +33,16 @@ export function HomeLayout() {
   return (
     <div className="min-h-screen flex flex-col text-gray-100">
       <header className="p-4 flex items-center justify-between">
-        <div className="flex flex-row gap-4">
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="text-primary"
-          >
-            {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-          </button>
+        <Link to="/home">
           <img src={logoReduced} alt="Kotoba AI logo" />
-        </div>
+        </Link>
+        <nav>
+          <ul className="flex flex-row gap-4 items-center justify-center">
+            <MenuItem to="/home/deck">Deck</MenuItem>
+            <MenuItem to="/home/practice">Practice</MenuItem>
+            <MenuItem to="/home/lessons">Lessons</MenuItem>
+          </ul>
+        </nav>
         <Button
           onClick={handleLogout}
           className="px-4 py-2 text-gray-100 rounded"
@@ -37,13 +53,19 @@ export function HomeLayout() {
       </header>
 
       <div className="flex-grow flex">
-        <Menu isMenuOpen={isMenuOpen} />
-
         <main
           className="flex-grow flex flex-col flex-1"
           style={{ maxHeight: "calc(100vh - 72px)" }}
         >
           <HomeRoutes />
+          <footer className="flex flex-col items-center justify-center gap-1 py-1 px-4">
+            <div className="flex flex-row gap-4 items-center">
+              🌐 <LanguageSwitcher />
+            </div>
+            <p className="font-montserrat text-sm text-center text-slate-800">
+              {t("copyright.title")}
+            </p>
+          </footer>
         </main>
       </div>
     </div>

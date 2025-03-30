@@ -3,6 +3,6 @@ import { CreateLessonDto } from "../../../types/interfaces/lesson/create-lesson.
 import { LessonDto } from "../../../types/interfaces/lesson/lesson.dto";
 
 export async function createLesson(dto: CreateLessonDto) {
-  const { data } = await api.post<LessonDto>("/api/lesson/", dto);
+  const { data } = await api.post<LessonDto>("/api/lesson", dto);
   return data;
 }

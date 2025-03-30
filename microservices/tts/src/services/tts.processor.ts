@@ -49,7 +49,7 @@ export class TTSProcessor extends WorkerHost {
       return filepath;
     } catch (_err) {
       this.logger.error(`Processing job [${job.name}] Failed`);
-      console.log(_err);
+      console.log(_err, job.data);
       throw _err;
     }
   }
