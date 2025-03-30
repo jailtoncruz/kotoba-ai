@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
-import LanguageSwitcher from "../../components/LanguageSwitcher";
-import { Logo } from "../../components/Logo";
+import LanguageSwitcher from "@components/LanguageSwitcher";
+import { Logo } from "@components/Logo";
 import { Text } from "@radix-ui/themes";
 import { Route, Routes } from "react-router-dom";
-import { Login } from "./login/Login";
-import { SignUp } from "./sign-up";
+import { Login } from "./Login";
+import { SignUp } from "./SignUp";
 
 export function SignIn() {
   const { t } = useTranslation();

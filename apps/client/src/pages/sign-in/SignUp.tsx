@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { SignUpForm } from "../../../features/sign-in";
-import { Logo } from "../../../components/Logo";
+import { SignUpForm } from "../../features/sign-in";
+import { Logo } from "../../components/Logo";
 import { useTranslation } from "react-i18next";
 
 export function SignUp() {

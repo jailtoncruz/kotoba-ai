@@ -1,6 +1,6 @@
 import { twMerge } from "tailwind-merge";
-import logoOffWhite from "../assets/logo-off-white.svg";
-import logoRed from "../assets/logo-red.svg";
+import logoOffWhite from "@assets/logo-off-white.svg";
+import logoRed from "@assets/logo-red.svg";
 
 type LogoApparence = "off-white" | "red";
 type LogoProps = {

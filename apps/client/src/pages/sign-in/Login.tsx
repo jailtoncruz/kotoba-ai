@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { Logo } from "../../../components/Logo";
+import { Logo } from "../../components/Logo";
 import { useTranslation } from "react-i18next";
-import { LoginForm } from "../../../features/sign-in";
+import { LoginForm } from "../../features/sign-in";
 import { Separator } from "@radix-ui/themes";
 
 export function Login() {
