@@ -8,7 +8,7 @@ export class SwaggerService {
 
   init(app: INestApplication) {
     const config = new DocumentBuilder()
-      .setTitle('🇯🇵 AI Teacher')
+      .setTitle('Kotoba AI 🇯🇵')
       .setDescription('Powered by AI.')
       .setVersion('1.0')
       .addBearerAuth()
