@@ -14,7 +14,20 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": null,
+    "baseUrl": "./src",
+
+    "paths": {
+      "@assets/*": ["assets/*"],
+      "@components/*": ["components/*"],
+      "@hooks/*": ["hooks/*"],
+      "@layouts/*": ["layouts/*"],
+      "@pages/*": ["pages/*"],
+      "@features/*": ["features/*"],
+      "@services/*": ["services/*"],
+      "@utils/*": ["utils/*"],
+      "@store/*": ["store/*"],
+      "@typing/*": ["types/*"]
+    },
 
     /* Linting */
     "strict": true,

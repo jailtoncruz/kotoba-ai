@@ -3,6 +3,18 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      colors: {
+        primary: "#E63946",  // Vermilion Red
+        accent: "#F697AA",   // Sakura Pink
+        background: "#FAF3E0", // Off-White
+        title: "#C54B63" // Dark Sakura Pink
+      },
+      fontFamily: {
+        zen: ["Zen Maru Gothic", "sans-serif"],
+        noto: ["Noto Sans", "sans-serif"],
+        montserrat: ["Montserrat", "sans-serif"],
+        mochiy: ['"Mochiy Pop One"', 'sans-serif'],
+      },
       keyframes: {
         flip: {
           "0%": { transform: "rotateY(0deg)" },

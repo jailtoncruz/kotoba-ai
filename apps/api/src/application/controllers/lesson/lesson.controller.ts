@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Request,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { LessonService } from './lesson.service';
 import { GenerateLessonDto } from './dto/generate-lesson.dto';
@@ -26,5 +34,10 @@ export class LessonController {
     @Request() req: AuthRequest,
   ) {
     return this.service.generateLesson(data, req.user.userId);
+  }
+
+  @Delete(':id')
+  async deleteLesson(@Param('id') id: string) {
+    return this.service.deleteLesson(id);
   }
 }

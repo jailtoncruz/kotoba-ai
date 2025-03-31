@@ -1,6 +1,13 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "tasks": {
+    "prisma:generate": {
+      "dependsOn": ["^prisma:generate"]
+    },
+    "build": {
+      "dependsOn": ["prisma:generate", "^build"],
+      "outputs": ["dist/**"]
+    },
     "dev": {
       "dependsOn": ["^dev"],
       "cache": false,
@@ -10,10 +17,6 @@
     "prisma:dev": {
       "cache": false,
       "outputs": []
-    },
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
     },
     "start": {}
   }

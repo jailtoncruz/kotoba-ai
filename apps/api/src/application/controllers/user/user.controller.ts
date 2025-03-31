@@ -11,8 +11,8 @@ export class UserController {
 
   @Post('register')
   @Public()
-  async register(@Body() { email, password }: SignInDto) {
-    return this.userService.createUser(email, password);
+  async register(@Body() data: SignInDto) {
+    return this.userService.createUser(data);
   }
 
   @Post('login')

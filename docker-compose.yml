@@ -3,14 +3,14 @@ services:
     image: postgres
     restart: always
     ports:
-      - '5444:5432'
+      - '5432:5432'
     environment:
-      - POSTGRES_DB=jpteacher
-      - POSTGRES_USER=jpteacher
-      - POSTGRES_PASSWORD=jpteacher
+      - POSTGRES_DB=kotoba
+      - POSTGRES_USER=kotoba
+      - POSTGRES_PASSWORD=kotoba
       - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
-      - ./data/postgresql:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
 
   nats:
     image: nats
@@ -19,3 +19,15 @@ services:
       - '4222:4222'
       - '6222:6222'
       - '8222:8222'
+
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data 
+
+volumes:
+  postgres_data:
+  redis_data: 

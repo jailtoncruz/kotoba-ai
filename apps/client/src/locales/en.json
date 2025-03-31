@@ -1,0 +1,27 @@
+{
+  "signIn": {
+    "title": "SIGN IN",
+    "message1": "Master Japanese with AI-powered flashcards and interactive lessons",
+    "message2": "Track your progress and learn at your own pace!",
+    "privacyMessage": "We respect your privacy – your data is safe with us.",
+    "guest": "Continue as a guest (客)",
+    "noLoginMessage": "Try our AI-powered flashcards now – no login needed!",
+
+    "login": {
+      "title": "Login",
+      "email": "Email",
+      "password": "Password"
+    },
+    "signUp": {
+      "title": "Sign Up",
+      "email": "Email",
+      "password": "Password",
+      "name": "Name",
+      "haveAccount": "Already have an account?",
+      "welcome": "Welcome"
+    }
+  },
+  "copyright": {
+    "title": "Kotoba AI (言葉 AI) © 2025 Jailton Cruz. All rights reserved."
+  }
+}
