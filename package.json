@@ -9,7 +9,9 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "start": "node apps/api/dist/main"
+    "prisma:dev": "turbo run prisma:dev",
+    "start": "turbo run start",
+    "start:prod": "node apps/api/dist/main"
   },
   "packageManager": "pnpm@9.0.4"
 }

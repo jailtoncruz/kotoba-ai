@@ -6,6 +6,7 @@ export * from './core/interfaces';
 // Infraestructure
 export { CloudModule } from './infraestructure/cloud/cloud.module';
 export { EnvironmentModule } from './infraestructure/config/environment/environment.module';
+export { EnvironmentService } from './infraestructure/config/environment/environment.service';
 export { FileService } from './infraestructure/config/file/file.service';
 export { LoggerModule } from './infraestructure/logger/logger.module';
 

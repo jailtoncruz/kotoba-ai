@@ -2,12 +2,17 @@
   "name": "api",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": {
+    "name": "Jailton Cruz",
+    "email": "jailtoncruz01@gmail.com"
+  },
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
+    "postinstall": "prisma generate",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "prestart": "prisma migrate deploy",
     "start": "nest start",
     "dev": "nest start --watch --preserveWatchOutput",
     "start:debug": "nest start --debug --watch",

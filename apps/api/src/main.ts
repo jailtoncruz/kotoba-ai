@@ -9,6 +9,9 @@ import { MicroservicesModule } from './application/microservices/microservices.m
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const environmentService = app.get(EnvironmentService);
+  const natsServer =
+    environmentService.get('NATS_SERVER') ?? 'nats://localhost:4222';
+
   app.setGlobalPrefix('api');
   app.get(SwaggerService).init(app);
   app.useGlobalPipes(new ValidationPipe());
@@ -21,7 +24,7 @@ async function bootstrap() {
       {
         transport: Transport.NATS,
         options: {
-          servers: ['nats://localhost:4222'],
+          servers: [natsServer],
           queue: 'tts_queue',
         },
       },
