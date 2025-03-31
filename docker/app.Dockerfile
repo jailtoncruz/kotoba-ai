@@ -27,8 +27,7 @@ COPY --chown=node:node --from=builder /app/apps/api/prisma ./apps/api/prisma
 COPY --chown=node:node --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY --chown=node:node --from=builder /app/packages/shared/package.json ./packages/shared
 
-COPY --chown=node:node --from=builder /app/apps/client/dist ./apps/client 
-COPY --chown=node:node --from=builder /app/packages/shared/dist ./apps/packages/shared
+COPY --chown=node:node --from=builder /app/apps/client/dist ./apps/client/dist
 
 COPY --chown=node:node --from=builder /app/package.json .
 COPY --chown=node:node --from=builder /app/pnpm-workspace.yaml .
