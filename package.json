@@ -12,7 +12,7 @@
     "prisma:dev": "turbo run prisma:dev",
     "prisma:generate": "turbo run prisma:generate",
     "start": "turbo run start",
-    "start:prod": "node apps/api/dist/main"
+    "start:prod": "turbo run start:prod"
   },
   "packageManager": "pnpm@9.0.4"
 }

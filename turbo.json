@@ -1,6 +1,9 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "tasks": {
+    "start:prod": {
+      "dependsOn": ["^start:prod"]
+    },
     "prisma:generate": {
       "dependsOn": ["^prisma:generate"]
     },
