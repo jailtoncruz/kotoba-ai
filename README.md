@@ -1,6 +1,8 @@
 # Kotoba AI
 
-<img src="./assets/presentation-phone-mock.png" alt="Kotoba AI Presentation Mockup" align="center" height="500px"/>
+<div align="center">
+  <img src="./assets/presentation-phone-mock.png" alt="Kotoba AI Presentation Mockup" height="500px"/>
+</div>
 
 Kotoba AI is an AI-powered flashcard application designed to help users memorize and practice Japanese effectively. It adapts to the user's learning progress and introduces new words, phrases, and grammar based on proficiency levels.
 
