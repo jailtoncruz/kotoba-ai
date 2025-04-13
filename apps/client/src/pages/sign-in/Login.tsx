@@ -7,20 +7,21 @@ import { Separator } from "@radix-ui/themes";
 export function Login() {
   const { t } = useTranslation();
   return (
-    <div className="flex-1  flex flex-col items-center justify-center gap-4">
+    <div className="flex-1 flex flex-col items-center justify-center gap-4">
       <Logo apparence="red" className="md:hidden" />
 
-      <div className="flex flex-col px-4 py-8 rounded max-w-[400px] w-full">
-        <p className="text-xl font-bold font-montserrat my-8">
+      <div className="flex flex-col px-4 rounded max-w-[400px] w-full">
+        <p className="text-xl font-bold font-montserrat my-2">
           {t("signIn.title")}
         </p>
         <div className="flex flex-col gap-2">
           <LoginForm />
         </div>
         <p className="text-sm text-center mt-2 text-slate-700">
+          {t("login.doNotHaveAccount")}
           Don't have an account?{" "}
           <Link to="sign-up" className="text-blue-700 cursor-pointer">
-            Sign Up
+            {t("signIn.title")}
           </Link>
         </p>
 

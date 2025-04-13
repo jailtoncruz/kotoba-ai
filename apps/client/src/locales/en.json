@@ -10,7 +10,8 @@
     "login": {
       "title": "Login",
       "email": "Email",
-      "password": "Password"
+      "password": "Password",
+      "doNotHaveAccount": "Don't have an account?"
     },
     "signUp": {
       "title": "Sign Up",

@@ -10,7 +10,8 @@
     "login": {
       "title": "ログイン",
       "email": "メールアドレス",
-      "password": "パスワード"
+      "password": "パスワード",
+      "doNotHaveAccount": "アカウントはまだですか？"
     },
     "signUp": {
       "title": "新規登録",

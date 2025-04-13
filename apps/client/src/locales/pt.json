@@ -10,7 +10,8 @@
     "login": {
       "title": "Entrar",
       "email": "E-mail",
-      "password": "Senha"
+      "password": "Senha",
+      "doNotHaveAccount": "Não possui uma conta?"
     },
     "signUp": {
       "title": "Registrar-se",
